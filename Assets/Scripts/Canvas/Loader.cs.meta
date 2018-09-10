@@ -1,0 +1,24 @@
+fileFormatVersion: 2
+guid: 5781c9cd8f61ba54085d0155dd6be131
+timeCreated: 1499065971
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - mirrorLine: {fileID: 1444538704242344, guid: e8123483116152a459c49a20478cf49d,
+      type: 2}
+  - trajectory: {fileID: 1474819555358542, guid: 52d53525b5fb8e3438062c1c754c9ce7,
+      type: 2}
+  - hudCanvas: {fileID: 1435371346339442, guid: 7863a27c31d344e448343923e6c267e5,
+      type: 2}
+  - pauseCanvas: {fileID: 1867762431300588, guid: b5103e899b817d14a8878c284e2d6631,
+      type: 2}
+  - gameOverCanvas: {fileID: 1406434405156950, guid: 660e374a228f9d644b2f1fb322a8675d,
+      type: 2}
+  - winCanvas: {fileID: 1115714009165808, guid: 4de277a0227a36e42a8d01ed4e7a95ce,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

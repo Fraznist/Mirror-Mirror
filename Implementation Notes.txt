@@ -1,0 +1,91 @@
+Singletons:
+-MirrorLine, Trajectory, GameManager and GUI classes are singletons. They are instantiated at the start of the game, and set so that they aren't destroyed on load. 
+
+Camera:
+-Every scene has its unique constraints for the camera, orthographicSize and a rectangle it can't get outside, these are entered to the CameraMovement script manually.
+
+-Update calls modify orthographicSize and camera position at every frame, depending on input. The orthographicSize constraints are applied here, position constraints are applied at the end of the update call, which pushes the camera inside the bounds without changing size.
+
+MirrorLine:
+-Consists of a LineRenderer, EdgeCollider2D and a script. LineRenderer draws a visual representation of the EdgeCollider2D, and the EdgeCollider2D is sent to the players script to calculate if a move is valid, and calculate the destination if valid.
+
+-LineRenderer has 2 materials, to represent valid and invalid states, which is set at runtime via callbacks from player script.
+
+-In update loop, there are 3 if clauses, mouse clicked, mouse pressed and mouse released. At mouse clicked, the start point of the line is set. 
+
+-Mouse pressed sets the finish point of the line to the mouse location at every update loop. It also sets the edgeColliders start and finish points to the exact same to that of the lines. This is called only if the mouse location changes with respect to the previous frame, while the mouse button is pressed. Every iteration of the mouse pressed clause signals player script to simulate the move, which in return sets the material of the mirrorline and trajectory
+
+-Mouse released sets the final finish point of the edgeCollider, then signals the player script that a move has been decided. Then it resets the lineRenderers points so that it isn't left on the screen.
+
+-MirrorLine script needs a pointer to the player script, therefore after every scene change, it acuqires a pointer to the new player objects script.
+
+Trajectory:
+-Trajectory consists of a lineRenderer and a script. The script has functions to add new points to the lineRenderer, reset the points, and set the material of the lineRenderer to valid or invalid.
+
+-The player script uses these functions to add edges to the lineRenderer during move simulations.
+
+Player:
+
+-Player is a kinematic rigidBody2D object, that cannot walk around, it can only move around the scene by teleporting using mirrorLines drawn by the player.
+
+-finishedMirror function is called from the mirrorLine script, which makes a simulation of the move, and initiates teleport and teleport animations if the move is valid.
+
+-A drawn mirrorLine, therefore a move has to fulfill 3 constraints to be valid.
+
+	1- Mirror image of the player with respect to only the drawn mirrorLine. a straight line drawn between the player and the image must pass through the mirrorLine. In other words, the player sprite should be able to see itself in the mirror, If you think in terms of a real mirror.
+
+	2- The trajectory between the teleport location and the player cannot cross any impassable objects other than an 	ingame mirror. A collision with ingame mirror reflects the trajectory, just as a real mirror reflects light. This 	therefore changes the trajcetory, and the teleport location.
+
+	3- Player cannot be colliding with an impassable object after teleportation. 
+
+- To check number one, the slope of the mirrorLines edgecollider is calculated. and 2 infintely long rays are cast starting at the players location, both perpendicular to the edgecollider. If one of them collides with the edgeCollider, constraint one is satisfied and the function returns collision point of edgeCollider and the ray to calculate the teleport location.
+
+- Number two is checked recursively. recursiveTestTrajectory takes 3 arguemnts, Vector2 raystart, Vector2 rayend, and the last collider2D it collided. A ray is cast between raystart and rayend, If the ray collides with an ingame mirror, a recursive call iis initiated, raystart is the collision point with ingame mirror, rayEnd is the reflection of the old rayEnd with respect to the ingame mirror, and the lastCollider is the ingame mirror itself. If the ray collides with a another impassable object, the function returns false.
+
+- Lastcollider needs to be disabled temporarily before the ray is cast. The ray is cast right on top of the mirror otherwise, and it automatically collides, causing an infinite loop.
+
+- Every collision with an impassable adds the collision point to the Trajectory object. The material is also set to invalid if required.
+
+- Number three is trivial to check. Just checks collisions of player and impassable objects.
+
+SortingLayers: 
+
+- Tiles and impassables are always behind moving objects such as players and enemies. To give a psuedo-3d look to the top down view, moving objects are sorted by their y axes. Everytime a player or enemy changes location, the sorting layer is recalcuated for the object.
+
+Movingobject:
+
+- Implements a smooth movement coroutine which takes the Vector2 it is going to move as an argument. A while loop continues to execute until the movingObject arrives to the destination. The MovementSpeed is fixed, so it will take 0.1 seconds guaranteed.
+
+PatrollingEnemy: 
+
+- This type of enemy has a predetermined set of vectors. It will do a smoothmovement according to the next vector in the list. the vector list is a circular array.
+
+Scenes:
+
+- Used Tiled to create scenes from premade tiles, and Tiled2Unity to import them to Unity. This enabled me to create scenes faster, and also use less colliders, by combining multiple impassable tiles in a row into a single collider object. The drawback is that i had to create and adjust collider components every scene manually.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
